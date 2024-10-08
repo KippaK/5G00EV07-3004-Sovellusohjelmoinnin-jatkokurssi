@@ -6,36 +6,40 @@ import {
 	TextInput,
 	TouchableOpacity,
 	View,
-	Alert,
 	ScrollView,
 	StatusBar,
 	KeyboardAvoidingView,
 	Platform,
 } from 'react-native';
-import { OPEN_WEATHER_API_KEY } from '@env'; 
+import { OPEN_WEATHER_API_KEY } from '@dotnev';
 
 const App: React.FC = () => {
 	const [city, setCity] = useState<string>(''); 
+	const [weatherData, setWeatherData] = useState<any | null>(null); 
+	const [error, setError] = useState<string | null>(null); 
 
 	const fetchWeatherData = async (): Promise<void> => {
 		if (!city) {
-			Alert.alert('Virhe', 'Syötä kaupungin nimi');
+			setError('Syötä kaupungin nimi');
 			return;
 		}
 		
 		try {
 			const response = await fetch(
-				`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPEN_WEATHER_API_KEY}&units=metric`
+				`https:
 			);
 			const data = await response.json();
 
 			if (response.ok) {
-				Alert.alert('Sää', `Lämpötila: ${data.main.temp} °C`);
+				setWeatherData(data); 
+				setError(null); 
 			} else {
-				Alert.alert('Virhe', data.message || 'Säätietojen hakeminen epäonnistui');
+				setWeatherData(null);
+				setError(data.message || 'Säätietojen hakeminen epäonnistui');
 			}
 		} catch (error) {
-			Alert.alert('Virhe', 'Säätietojen hakeminen epäonnistui');
+			setWeatherData(null);
+			setError('Säätietojen hakeminen epäonnistui');
 		}
 	};
 
@@ -65,6 +69,18 @@ const App: React.FC = () => {
 						<TouchableOpacity style={styles.button} onPress={fetchWeatherData}>
 							<Text style={styles.buttonText}>Hae sää</Text>
 						</TouchableOpacity>
+
+						{error && <Text style={styles.errorText}>{error}</Text>}
+
+						{/* Weather box */}
+						{weatherData && (
+							<View style={styles.weatherBox}>
+								<Text style={styles.weatherText}>Lämpötila: {weatherData.main.temp} °C</Text>
+								<Text style={styles.weatherText}>Säätila: {weatherData.weather[0].description}</Text>
+								<Text style={styles.weatherText}>Kosteus: {weatherData.main.humidity}%</Text>
+								<Text style={styles.weatherText}>Tuulen nopeus: {weatherData.wind.speed} m/s</Text>
+							</View>
+						)}
 					</View>
 				</ScrollView>
 			</KeyboardAvoidingView>
@@ -127,6 +143,22 @@ const styles = StyleSheet.create({
 	buttonText: {
 		color: 'white',
 		fontSize: 16,
+	},
+	weatherBox: {
+		marginTop: 20,
+		padding: 15,
+		backgroundColor: '#e0f7fa',
+		borderRadius: 5,
+		alignItems: 'center',
+	},
+	weatherText: {
+		fontSize: 16,
+		color: '#333',
+		marginBottom: 5,
+	},
+	errorText: {
+		color: 'red',
+		marginTop: 10,
 	},
 });
 
