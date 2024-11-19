@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">GPS</string>
+    <string name="app_title">Location app</string>
+    <string name="null_location">Location not available</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="location">Location</string>
+    <string name="getLocation">Get location</string>
+    <string name="stopTracking">Stop location tracking</string>
+    <string name="startTracking">Start location tracking</string>
+</resources>
